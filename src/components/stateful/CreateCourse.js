@@ -2,10 +2,12 @@ import React from 'react'
 import { useContext, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import UserContext from '../../context/UserContext';
+import CourseContext from '../../context/CourseContext';
 
 function CreateCourse() {
     const navigate = useNavigate();
-    const { authUser, setUserCredentials } = useContext(UserContext);
+    const { authUser } = useContext(UserContext);
+    const { updateCourses } = useContext(CourseContext).actions
     const { firstName, lastName } = authUser;
 
     const title = useRef(null);
@@ -14,24 +16,24 @@ function CreateCourse() {
     const materialsNeeded = useRef(null);
     const [errors, setErrors] = useState([]);
 
-    console.log(setUserCredentials);
     const onSubmit = async (event) => {
         event.preventDefault();
 
         // Format estimated time
-        const estimatedTimeValue = estimatedTime.current.value.trim();
-        const formattedEstimatedTime = estimatedTimeValue.match(/^\d+/)?.[0] || '';
-        const formattedEstimatedTimeWithHours = `${formattedEstimatedTime} hours`;
+        // const estimatedTimeValue = estimatedTime.current.value.trim();
+        // const formattedEstimatedTime = estimatedTimeValue.match(/^\d+/)?.[0] || '';
+        // const formattedEstimatedTimeWithHours = `${formattedEstimatedTime} hours`;
 
         try {
             const add = {
-                User: authUser,
-                description: title.current.value,
-                estimatedTime: formattedEstimatedTimeWithHours,
+                User: { ...authUser },
+                description: description.current.value,
+                estimatedTime: estimatedTime.current.value,
                 materialsNeeded: materialsNeeded.current.value,
                 title: title.current.value,
                 userId: authUser.id
             }
+
             const response = await fetch("http://localhost:5000/api/courses", {
                 method: "POST",
                 headers: {
@@ -39,11 +41,15 @@ function CreateCourse() {
                 },
                 body: JSON.stringify(add)
             });
+
             if (response.status === 201) {
+                const newCourse = await response.json();
+                updateCourses(oldCourses => [...oldCourses, newCourse]);
                 console.log(`Course: ${add.title} has been created`);
                 navigate('/');
             } else if (response.status === 400) {
                 const data = await response.json();
+                console.log(data);
                 setErrors(data.errors);
             } else {
                 throw new Error();

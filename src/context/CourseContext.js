@@ -1,6 +1,5 @@
 import { createContext, useState, useEffect } from "react";
 
-
 const CourseContext = createContext(null);
 
 export const CourseProvider = (props) => {
@@ -24,12 +23,15 @@ export const CourseProvider = (props) => {
 
     fetchCourses();
   }, []);
-
   
+  const updateCourses = (data) => {
+    setCourses(data);
+  }
+
   
   return (
     <CourseContext.Provider 
-      value={{ courses }}>
+      value={{ courses, actions:{updateCourses} }}>
       {props.children}
     </CourseContext.Provider>
 

@@ -1,13 +1,16 @@
 let express = require('express');
 let router = express.Router();
 const moment = require('moment');
-const bcrypt = require('bcryptjs');
+
+
 router.use(express.urlencoded({ extended: true }));
 const { authenticatedUser } = require('../middleware/auth-user');
 
+//User & Course Models
 const User = require('../models').User;
 const Course = require('../models').Course;
 
+//Async Handler 
 function asyncHandler(cb) {
   return async (req, res, next) => {
     try {
@@ -24,7 +27,6 @@ router.get('/', async function (req, res) {
 
 router.get('/users', authenticatedUser, asyncHandler(async (req, res) => {
   const currentUser = req.currentUser;
-  // console.log(currentUser);
   const { id, firstName, lastName, emailAddress } = currentUser.dataValues;
   const user = {
     id: id,
@@ -34,8 +36,6 @@ router.get('/users', authenticatedUser, asyncHandler(async (req, res) => {
   }
   res.status(200).json(user);
 }));
-
-
 
 router.post('/users', asyncHandler(async (req, res) => {
   try {
@@ -118,6 +118,15 @@ course, and return a 201 HTTP status code and no content.
 */
 router.post('/courses', asyncHandler(async (req, res) => {
   try {
+
+    let { title, description, estimatedTime, materialsNeeded } = req.body;
+
+    !title ? title = '' : title;
+    !description ? description = '' : description;
+    !estimatedTime ? estimatedTime = '' : estimatedTime;
+    !materialsNeeded ? estimatedTime = '' : materialsNeeded;
+
+    console.log(req.body['description']);
     const course = await Course.create({
       title: req.body.title,
       description: req.body.description,
@@ -128,8 +137,10 @@ router.post('/courses', asyncHandler(async (req, res) => {
       userId: req.body.userId
     })
     const { id } = course;
+    console.log(course);
     res.location(`/courses/${id}`).status(201).json(course);
   } catch (error) {
+
     console.log('ERROR:', error.name);
     if (error.name === "SequelizeValidationError" || error.name === "SequelizeUniqueConstraintError") {
       const errors = error.errors.map(err => err.message);
@@ -151,6 +162,7 @@ router.put('/courses/:id', authenticatedUser, asyncHandler(async (req, res) => {
       where: { id: req.params.id }
     });
     const user = req.currentUser;
+
     if (user.id === course.userId) {
       await course.update({
         title: req.body.title,

@@ -12,7 +12,9 @@ import CourseDetail from './components/stateful/CourseDetail';
 import UpdateCourse from './components/stateful/UpdateCourse';
 import PrivateRoute from './components/stateful/PrivateRoute';
 import Header from './components/stateless/Header';
-import Error from './components/stateless/Error';
+import Forbidden from './components/stateless/Forbidden';
+import NotFound from './components/stateless/NotFound';
+import UnhandledError from './components/stateless/UnhandledError';
 
 
 function App() {
@@ -31,7 +33,11 @@ function App() {
             <Route path='courses/create' element={<CreateCourse />} />
             <Route path={`/courses/:id/update`} element={<UpdateCourse />} />
           </Route>
-          <Route path='*' element={<Error />} />
+
+          <Route path='/forbidden' element={<Forbidden/> } /> 
+          <Route path='/notfound' element={<NotFound/> } /> 
+          <Route path='/error' element={<UnhandledError/>} /> 
+          <Route path='*' element={<NotFound/> } />
         </Routes>
       </CourseProvider>
     </>

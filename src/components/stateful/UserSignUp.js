@@ -1,5 +1,5 @@
 import React from 'react'
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useRef, useState } from 'react'
 
 function UserSignUp() {
@@ -7,8 +7,6 @@ function UserSignUp() {
     const lastName = useRef(null);
     const emailAddress = useRef(null);
     const password = useRef(null);
-
-    const navigate = useNavigate([]);
 
     const [errors, setErrors] = useState([]);
 
@@ -32,7 +30,7 @@ function UserSignUp() {
             });
             if (response.status === 201) {
                 console.log(`${user.firstName} has been authenticated`);
-                navigate('/');
+                <Link to='/' />
             } else if (response.status === 400) {
                 const data = await response.json();
                 setErrors(data.errors);
@@ -41,13 +39,13 @@ function UserSignUp() {
             }
         } catch (error) {
             console.log(error);
-            navigate('/error');
+            <Link to='error' />
         }
     };
 
     function onCancel(event) {
         event.preventDefault();
-        navigate('/');
+        <Link to='/' />
     };
 
     return (

@@ -6,8 +6,7 @@ function UserSignout() {
   const { actions } = useContext(UserContext);
   useEffect(() => {
     actions.signOut();
-    },[]
-  );
+    },[]);
 
   return (
     <Navigate to = '/' replace/>
