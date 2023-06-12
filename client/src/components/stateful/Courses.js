@@ -1,37 +1,16 @@
-import React, { useEffect,useState } from 'react';
+import React from 'react';
 import { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import CourseContext from '../../context/CourseContext';
-import UserContext from "../../context/UserContext";
+
 
 function Courses() {
-    const { authUser } = useContext(UserContext);
     const { courses } = useContext(CourseContext);
-  
-    const [filteredCourses, setFilteredCourses] = useState([]);
-  
-    useEffect(() => {
-      if (authUser !== null) {
-        const { id } = authUser;
-        const coursesMatch = courses.filter((course) => course.userId === id);
-        setFilteredCourses(coursesMatch);
-      }
-    }, [authUser, courses]);
-  
-    if (authUser === null) {
-      return (
-        <>
-          <div className="wrap main--grid">Welcome to Courses Page</div>
-          <h5>
-            Please <Link to="/signin">Sign-in</Link> Or <Link to="/signup">Sign-up</Link> to continue
-          </h5>
-        </>
-      );
-    } else {
+
       return (
         <div className="wrap main--grid">
-          {filteredCourses.map((course, index) => (
-            <Link className="course--module course--link" key={index} to={`/courses/${index + 1}`}>
+          {courses.map((course, index) => (
+            <Link className="course--module course--link" key={index} to={`/courses/${course.id}`}>
               <h2 className="course--label">Course</h2>
               <h3 className="course--title">{course.description}</h3>
             </Link>
@@ -46,7 +25,6 @@ function Courses() {
           </Link>
         </div>
       );
-    }
   }
 
 export default Courses

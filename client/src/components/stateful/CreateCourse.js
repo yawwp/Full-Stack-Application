@@ -19,11 +19,6 @@ function CreateCourse() {
     const onSubmit = async (event) => {
         event.preventDefault();
 
-        // Format estimated time
-        // const estimatedTimeValue = estimatedTime.current.value.trim();
-        // const formattedEstimatedTime = estimatedTimeValue.match(/^\d+/)?.[0] || '';
-        // const formattedEstimatedTimeWithHours = `${formattedEstimatedTime} hours`;
-
         try {
             const add = {
                 User: { ...authUser },
@@ -45,11 +40,12 @@ function CreateCourse() {
             if (response.status === 201) {
                 const newCourse = await response.json();
                 updateCourses(oldCourses => [...oldCourses, newCourse]);
-                console.log(`Course: ${add.title} has been created`);
+                // console.log(`Course: ${add.title} has been created`);
                 navigate('/');
+                window.location.reload();
             } else if (response.status === 400) {
                 const data = await response.json();
-                console.log(data);
+                // console.log(data);
                 setErrors(data.errors);
             } else {
                 throw new Error();

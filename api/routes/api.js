@@ -58,7 +58,6 @@ router.post('/users', asyncHandler(async (req, res) => {
     res.location('/').status(201).end();
   } catch (error) {
     console.log('ERROR:', error.name);
-    console.log("This is the password:", req.body.password);
     if (error.name === "SequelizeValidationError" || error.name === "SequelizeUniqueConstraintError") {
       const errors = error.errors.map(err => err.message);
       console.log(errors);
@@ -119,14 +118,13 @@ course, and return a 201 HTTP status code and no content.
 router.post('/courses', asyncHandler(async (req, res) => {
   try {
 
-    let { title, description, estimatedTime, materialsNeeded } = req.body;
+    let { title, description, estimatedTime, materialsNeeded, userId } = req.body;
 
     !title ? title = '' : title;
     !description ? description = '' : description;
     !estimatedTime ? estimatedTime = '' : estimatedTime;
     !materialsNeeded ? estimatedTime = '' : materialsNeeded;
-
-    console.log(req.body['description']);
+    
     const course = await Course.create({
       title: req.body.title,
       description: req.body.description,
@@ -135,12 +133,12 @@ router.post('/courses', asyncHandler(async (req, res) => {
       createdAt: moment(),
       updatedAt: moment(),
       userId: req.body.userId
-    })
+    });
+
+    
     const { id } = course;
-    console.log(course);
     res.location(`/courses/${id}`).status(201).json(course);
   } catch (error) {
-
     console.log('ERROR:', error.name);
     if (error.name === "SequelizeValidationError" || error.name === "SequelizeUniqueConstraintError") {
       const errors = error.errors.map(err => err.message);
@@ -200,8 +198,6 @@ router.delete('/courses/:id', authenticatedUser, asyncHandler(async (req, res) =
     where: { id: req.params.id }
   })
   if (user.id === course.userId) {
-    console.log(user.id);
-    console.log(course.userId);
     await Course.destroy({
       where: { id: req.params.id }
     });

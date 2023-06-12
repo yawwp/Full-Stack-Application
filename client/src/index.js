@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import '../src/styles/global.css';
 import '../src/styles/reset.css';
+import '../src/styles/global.css';
 import App from './App';
 import { BrowserRouter } from 'react-router-dom';
 import { UserProvider } from './context/UserContext';

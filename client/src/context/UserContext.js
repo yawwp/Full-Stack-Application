@@ -6,7 +6,6 @@ const UserContext = createContext(null);
 export const UserProvider = (props) => {
     const cookie = Cookies.get("authenticatedUser");
     const [authUser, setAuthUser] = useState(cookie ? JSON.parse(cookie) : null);
-    const [userCredentials, setUserCredentials] = useState({});
     const [user, setUser] = useState([]);
 
     useEffect(() => {
@@ -27,7 +26,6 @@ export const UserProvider = (props) => {
                 password: creds.password
             }
 
-            setUserCredentials(info);
             setUser(info);
 
             const encodedCredentials = btoa(`${info.emailAddress}:${info.password}`);
@@ -65,7 +63,6 @@ export const UserProvider = (props) => {
         <UserContext.Provider value={{
             user,
             authUser,
-            userCredentials,
             actions: {
                 signIn,
                 signOut

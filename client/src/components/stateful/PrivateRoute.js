@@ -5,7 +5,7 @@ import { Navigate, Outlet } from 'react-router-dom';
 
 const PrivateRoute = () => {
     const { authUser } = useContext(UserContext);
-
+    
     return authUser ? <Outlet/> : <Navigate to='/forbidden' />
 }
 

@@ -1,5 +1,5 @@
 import React from 'react'
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useRef, useState } from 'react'
 
 function UserSignUp() {
@@ -10,17 +10,20 @@ function UserSignUp() {
 
     const [errors, setErrors] = useState([]);
 
+    const navigate = useNavigate();
+
     const onSubmit = async (event) => {
         event.preventDefault();
 
-        const user = {
-            firstName: firstName.current.value,
-            lastName: lastName.current.value,
-            emailAddress: emailAddress.current.value,
-            password: password.current.value
-        };
-
         try {
+            const user = {
+                firstName: firstName.current.value,
+                lastName: lastName.current.value,
+                emailAddress: emailAddress.current.value,
+                password: password.current.value
+            };
+
+
             const response = await fetch("http://localhost:5000/api/users", {
                 method: "POST",
                 headers: {
@@ -30,9 +33,10 @@ function UserSignUp() {
             });
             if (response.status === 201) {
                 console.log(`${user.firstName} has been authenticated`);
-                <Link to='/' />
+                navigate('/');
             } else if (response.status === 400) {
                 const data = await response.json();
+                console.log(data);
                 setErrors(data.errors);
             } else {
                 throw new Error();
@@ -45,7 +49,7 @@ function UserSignUp() {
 
     function onCancel(event) {
         event.preventDefault();
-        <Link to='/' />
+        navigate('/');
     };
 
     return (

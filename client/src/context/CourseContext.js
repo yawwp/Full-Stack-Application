@@ -24,6 +24,7 @@ export const CourseProvider = (props) => {
     fetchCourses();
   }, []);
   
+
   const updateCourses = (data) => {
     setCourses(data);
   }
@@ -31,7 +32,7 @@ export const CourseProvider = (props) => {
   
   return (
     <CourseContext.Provider 
-      value={{ courses, actions:{updateCourses} }}>
+      value={{ courses,setCourses, actions:{updateCourses} }}>
       {props.children}
     </CourseContext.Provider>
 
