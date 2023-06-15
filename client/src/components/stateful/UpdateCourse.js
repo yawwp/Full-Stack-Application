@@ -4,6 +4,19 @@ import CourseContext from '../../context/CourseContext'
 import UserContext from '../../context/UserContext';
 
 
+/**
+ * Update Course Page - PUT Request
+ * 
+ * This page is to update data. 
+ * 
+ * The user needs to authenticated in order to get access to this page. 
+ * The authenticated user would send a PUT request to the server, route
+ * `http://localhost:5000/api/courses/${course.id}` and is prompted 
+ * if any errors/validator's occur.
+ * 
+ * @returns updated information based on user's input
+ */
+
 const UpdateCourse = () => {
     const [errors, setErrors] = useState([]);
     const navigate = useNavigate();
@@ -23,13 +36,21 @@ const UpdateCourse = () => {
     const course = selectedCourse[0];
 
     useEffect(() => {
-        const checkAuth = () => {
-            if (course.User.emailAddress !== authUser.emailAddress) {
-                navigate('/forbidden');
+        const checkCourseIndex = () => {
+            let array = courses.map(course => course.id);
+            let checkerId = array.find(number => number === parseInt(id))
+
+            if (checkerId === undefined) {
+                navigate('/notfound');
+            } else {
+                if ( course.User.emailAddress !== user.emailAddress ){
+                    navigate('/forbidden');
+                }
             }
         }
-        checkAuth();
-    }, []);
+        checkCourseIndex();    
+    }, [courses]);
+
 
     try {
         if (!course) {
@@ -77,6 +98,8 @@ const UpdateCourse = () => {
                     } else if (response.status === 400) {
                         const data = await response.json();
                         setErrors(data.errors);
+                    } else if (response.status === 401 ) {
+                        navigate('/forbidden');
                     } else {
                         throw new Error();
                     }

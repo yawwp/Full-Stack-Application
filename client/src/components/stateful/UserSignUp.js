@@ -2,6 +2,21 @@ import React from 'react'
 import { Link, useNavigate } from 'react-router-dom';
 import { useRef, useState } from 'react'
 
+
+/**
+ * User Sign Up Page - POST Request 
+ * 
+ * This page is for users to sign up. 
+ * 
+ * The on sumbit button submits the user's data into the data base. 
+ * This data includes: first name, last name, email address and 
+ * password. 
+ * 
+ * A POST request is sent to "http://localhost:5000/api/users" 
+ * which then goes through the validation. If an error occurs, 
+ * the user will be prompted with an error message. 
+ * 
+ */
 function UserSignUp() {
     const firstName = useRef(null);
     const lastName = useRef(null);

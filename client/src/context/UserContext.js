@@ -3,6 +3,29 @@ import Cookies from 'js-cookie';
 
 const UserContext = createContext(null);
 
+/**
+ * User Provider
+ * - Used to test for an authenticated user and provides user information 
+ * through out the application
+ *  
+ * 
+ * useStates
+ * 1) authUser state uses a cookie to store the user's email address. This was set from 
+ * the signIn method. 
+ * 2) user state is used to get the password to re-authenticate to certain routes. 
+ * 
+ * useEffect
+ * - Sets the localStorage user
+ * 
+ * Methods
+ * SignIn 
+ * - Takes in an email address and password. This method sets the cookie and 
+ * updates the state
+ * 
+ * SignOut
+ * - removes credentials from local storage, cookies and updates the user state
+ */
+
 export const UserProvider = (props) => {
     const cookie = Cookies.get("authenticatedUser");
     const [authUser, setAuthUser] = useState(cookie ? JSON.parse(cookie) : null);
@@ -50,7 +73,6 @@ export const UserProvider = (props) => {
         } catch (error) {
             console.log(error);
         }
-
     }
 
     const signOut = async () => {

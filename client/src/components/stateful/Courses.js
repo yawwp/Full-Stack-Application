@@ -3,7 +3,11 @@ import { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import CourseContext from '../../context/CourseContext';
 
-
+/** 
+ *  Main Courses Page
+ *  Uses the fetch results from the Course Context
+ *  The data is stored in the courses state inside the Course Context
+ *  */ 
 function Courses() {
     const { courses } = useContext(CourseContext);
 

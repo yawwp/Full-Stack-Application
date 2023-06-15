@@ -29,12 +29,10 @@ function App() {
           <Route path='signout' element={<UserSignOut />} />
           <Route path='courses' element={<Courses />} />
           <Route path="courses/:id" element={<CourseDetail />} />
-          
           <Route element={<PrivateRoute />}>
             <Route path='courses/create' element={<CreateCourse />} />
             <Route path={`/courses/:id/update`} element={<UpdateCourse />} />
           </Route>
-
           <Route path='/forbidden' element={<Forbidden/> } /> 
           <Route path='/notfound' element={<NotFound/> } /> 
           <Route path='/error' element={<UnhandledError/>} /> 

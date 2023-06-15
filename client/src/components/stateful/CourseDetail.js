@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useContext } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import CourseContext from '../../context/CourseContext';
@@ -6,28 +6,84 @@ import UserContext from '../../context/UserContext';
 
 
 function CourseDetail() {
+    //Using the Parameters from localhost:3000/courses/:id
     const { id } = useParams();
+    const index = parseInt(id);
+
+    //Using navigate hook
     const navigate = useNavigate();
-    const { courses, setCourses } = useContext(CourseContext);
+
+    //Course Context Properties
+    const { courses, setCourses, singleCourse } = useContext(CourseContext);
+
+    //Course Context Methods
+    const { fetchSingleCourse, fetchCourses } = useContext(CourseContext).actions;
+
+    //User Context Properties
     const { user } = useContext(UserContext);
 
-    const selectedCourse = courses.filter(course => course.id === parseInt(id));
-    const course = selectedCourse[0];
+    //States for loading and parameter searching
+    const [coursesId, setCoursesId] = useState([]);
+    const [loading, setLoading] = useState(true);
 
-    let array = courses.map(course => course.id);
-    let checkerId = array.find(number => number === parseInt(id));
+    /**
+     * 
+     *  Use Effects 
+     * 1) The first useEffect is awaiting the promises from  
+     *      '/courses/:id', `/courses` and changing the state loading to false
+     * 2) The second useEffect is for testing. Here we are creating an array of 
+     *      the id's of all the courses and stored in the "coursesId" hook. 
+     * 3) The third useEffect is the test. Since the data needs time to resolve,
+     *      Setting a one second time out to fully wait for the data. 
+     *      If the index matches somewhere, then the data is rendered to the page
+     *      If the index does not match, then the data is navigated to the /error route
+     */
+    useEffect(() => {
+        const fetchCourse = async () => {
+            try {
+                await Promise.all([fetchSingleCourse(index), fetchCourses()]);
+                setLoading(false);
+            } catch (error) {
+                console.error(error);
+                navigate('/error');
+            }
+        };
+        fetchCourse();
+    }, [index]);
 
-    if (checkerId === undefined) {
-        navigate('/notfound');
-    }
 
-    if (!course) {
-        return <div>Loading....</div>
+    useEffect(() => {
+        if (!loading) {
+            const array = courses.map(course => course.id);
+            setCoursesId(array);
+        }
+    }, [loading]);
+
+    useEffect(() => {
+        if (loading || !coursesId.includes(index)) {
+          const timeoutId = setTimeout(() => {
+            navigate('/notfound');
+          }, 1000); 
+    
+          return () => {
+            clearTimeout(timeoutId);
+          };
+        }
+      }, [loading, index, coursesId, navigate]);
+
+
+    //Loading test
+    if (!singleCourse || loading) {
+        return <div>Searching....</div>
     } else {
-        const arrayMaterials = course.materialsNeeded.split('\n');
+        //Material Rendering
+        const arrayMaterials = singleCourse.materialsNeeded.split('\n');
         const filteredMaterials = arrayMaterials.filter(material => material.trim() !== '');
 
-
+        /**
+         * Course Delete Handler
+         * @param id - uses the param hook to search the id of the page. 
+         */
         const handleCourseDelete = async (id) => {
             try {
                 const authHeader = btoa(`${user.emailAddress}:${user.password}`);
@@ -40,10 +96,10 @@ function CourseDetail() {
                     },
                 };
 
-                const response = await fetch(`http://localhost:5000/api/courses/${course.id}`, deleteOptions);
+                const response = await fetch(`http://localhost:5000/api/courses/${singleCourse.id}`, deleteOptions);
 
                 if (response.status === 204) {
-                    console.log(`${course.title} course has been deleted!`);
+                    console.log(`${singleCourse.title} course has been deleted!`);
                     const updatedCourses = courses.filter(course => course.id !== id);
                     setCourses(updatedCourses);
                     navigate('/');
@@ -64,7 +120,7 @@ function CourseDetail() {
                 <div className="actions--bar">
                     <div className="wrap">
                         <Link className="button" to={`/courses/${id}/update`}>Update Course</Link>
-                        <Link className="button" onClick={() => handleCourseDelete(course.id)} to="/">Delete Course</Link>
+                        <Link className="button" onClick={() => handleCourseDelete(singleCourse.id)} to="/">Delete Course</Link>
                         <Link className="button button-secondary" to="/">Return to List</Link>
                     </div>
                 </div>
@@ -75,13 +131,13 @@ function CourseDetail() {
                         <div className="main--flex">
                             <div>
                                 <h3 className="course--detail--title">Course</h3>
-                                <h4 className="course--name">{course.title}</h4>
-                                <p>By {course.User.firstName} {course.User.lastName} </p>
-                                <p> {course.description}</p>
+                                <h4 className="course--name">{singleCourse.title}</h4>
+                                <p>By {singleCourse.User.firstName} {singleCourse.User.lastName} </p>
+                                <p> {singleCourse.description}</p>
                             </div>
                             <div>
                                 <h3 className="course--detail--title">Estimated Time</h3>
-                                <p>{course.estimatedTime}</p>
+                                <p>{singleCourse.estimatedTime}</p>
 
                                 <h3 className="course--detail--title">Materials Needed</h3>
                                 <ul className="course--detail--list">

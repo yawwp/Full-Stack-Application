@@ -4,6 +4,10 @@ import { useNavigate } from 'react-router-dom';
 import UserContext from '../../context/UserContext';
 import CourseContext from '../../context/CourseContext';
 
+
+/**
+ * Create Course Page - POST Request
+ */
 function CreateCourse() {
     const navigate = useNavigate();
     const { authUser } = useContext(UserContext);
@@ -40,12 +44,10 @@ function CreateCourse() {
             if (response.status === 201) {
                 const newCourse = await response.json();
                 updateCourses(oldCourses => [...oldCourses, newCourse]);
-                // console.log(`Course: ${add.title} has been created`);
                 navigate('/');
                 window.location.reload();
             } else if (response.status === 400) {
                 const data = await response.json();
-                // console.log(data);
                 setErrors(data.errors);
             } else {
                 throw new Error();

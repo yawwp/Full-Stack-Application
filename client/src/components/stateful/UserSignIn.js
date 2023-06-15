@@ -3,13 +3,28 @@ import { useContext, useState, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import UserContext from '../../context/UserContext';
 
+/**
+ * User Sign In Page - GET Request 
+ * 
+ * This page is for users to sign in. We use the useContext hook along 
+ * with the User Context Provider to fetch for the user, based on 
+ * the email address and password. 
+ * 
+ * The handle sumbit button is passed in the email address and password.
+ * Then the data is passed the "http://localhost:5000/api/users" back-end 
+ * to verify if the user is in the data base. 
+ * 
+ */
 function UserSignIn() {
+
     const { signIn } = useContext(UserContext).actions;
     
     const navigate = useNavigate();
     const emailAddress = useRef(null);
     const password = useRef(null);
     const [errors, setErrors] = useState([]);
+
+
 
     const handleSubmit = async (event) => {
         event.preventDefault();

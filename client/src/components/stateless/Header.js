@@ -2,6 +2,12 @@ import { useContext } from 'react'
 import { Link } from 'react-router-dom';
 import UserContext from '../../context/UserContext';
 
+/**
+ * Header Page 
+ * 
+ * The header page changes based on if a user has signed in
+ * 
+ */
 function Header() {
     const { authUser } = useContext(UserContext);
 
