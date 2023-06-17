@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 import UserContext from "../../context/UserContext";
-import { Navigate, Outlet } from 'react-router-dom';
+import { Navigate, Outlet, useLocation } from 'react-router-dom';
 
 
 /**
@@ -9,10 +9,17 @@ import { Navigate, Outlet } from 'react-router-dom';
  * @returns If there is an auth user then outlet to the private componenets
  *          If not then navigate to the forbidden page.
  */
+
 const PrivateRoute = () => {
     const { authUser } = useContext(UserContext);
-    
-    return authUser ? <Outlet/> : <Navigate to='/forbidden' />
+
+    const location = useLocation();
+
+    return authUser ? <Outlet /> : <Navigate
+        to={'/signin'}
+        state={{ from: location }}
+        replace
+    />
 }
 
 export default PrivateRoute; 

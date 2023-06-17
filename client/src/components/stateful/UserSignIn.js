@@ -1,6 +1,6 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useContext, useState, useRef } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import UserContext from '../../context/UserContext';
 
 /**
@@ -16,10 +16,11 @@ import UserContext from '../../context/UserContext';
  * 
  */
 function UserSignIn() {
-
     const { signIn } = useContext(UserContext).actions;
-    
+
     const navigate = useNavigate();
+    const location = useLocation();
+
     const emailAddress = useRef(null);
     const password = useRef(null);
     const [errors, setErrors] = useState([]);
@@ -35,7 +36,11 @@ function UserSignIn() {
         try {
             const user = await signIn(creds);
             if (user) {
-                navigate('/');
+                if (location.state === null) { 
+                    navigate('/');
+                } else { 
+                    navigate(location?.state?.from?.pathname);
+                }
             } else {
                 throw new Error();
             }
@@ -43,7 +48,7 @@ function UserSignIn() {
             setErrors(["Sign-in was unsuccessful"]);
         }
     }
-    
+
     const handleCancel = async (event) => {
         event.preventDefault();
         navigate('/');

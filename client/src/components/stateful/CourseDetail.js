@@ -20,7 +20,7 @@ function CourseDetail() {
     const { fetchSingleCourse, fetchCourses } = useContext(CourseContext).actions;
 
     //User Context Properties
-    const { user } = useContext(UserContext);
+    const { user, authUser } = useContext(UserContext);
 
     //States for loading and parameter searching
     const [coursesId, setCoursesId] = useState([]);
@@ -61,15 +61,15 @@ function CourseDetail() {
 
     useEffect(() => {
         if (loading || !coursesId.includes(index)) {
-          const timeoutId = setTimeout(() => {
-            navigate('/notfound');
-          }, 1000); 
-    
-          return () => {
-            clearTimeout(timeoutId);
-          };
+            const timeoutId = setTimeout(() => {
+                navigate('/notfound');
+            }, 1000);
+
+            return () => {
+                clearTimeout(timeoutId);
+            };
         }
-      }, [loading, index, coursesId, navigate]);
+    }, [loading, index, coursesId, navigate]);
 
 
     //Loading test
@@ -107,20 +107,26 @@ function CourseDetail() {
                     navigate('/forbidden');
                 } else {
                     console.log(response.status);
-                    throw new Error(`Error deleting course`);
+                    throw new Error();
                 }
             } catch (error) {
                 console.error(error);
                 navigate('/error');
             }
         };
-
         return (
             <main>
                 <div className="actions--bar">
                     <div className="wrap">
-                        <Link className="button" to={`/courses/${id}/update`}>Update Course</Link>
-                        <Link className="button" onClick={() => handleCourseDelete(singleCourse.id)} to="/">Delete Course</Link>
+                        { authUser && authUser.emailAddress === singleCourse.User.emailAddress ?
+                            <>
+                                <Link className="button" to={`/courses/${id}/update`}>Update Course</Link>
+                                <Link className="button" onClick={() => handleCourseDelete(singleCourse.id)} to="/">Delete Course</Link>
+                            </>
+                            :
+                            <>
+                            </>
+                        }
                         <Link className="button button-secondary" to="/">Return to List</Link>
                     </div>
                 </div>

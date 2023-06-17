@@ -1,6 +1,7 @@
 import React from 'react'
 import { Link, useNavigate } from 'react-router-dom';
-import { useRef, useState } from 'react'
+import { useRef, useState, useContext } from 'react';
+import UserContext from '../../context/UserContext';
 
 
 /**
@@ -22,6 +23,8 @@ function UserSignUp() {
     const lastName = useRef(null);
     const emailAddress = useRef(null);
     const password = useRef(null);
+
+    const { signIn } = useContext(UserContext).actions;
 
     const [errors, setErrors] = useState([]);
 
@@ -48,6 +51,11 @@ function UserSignUp() {
             });
             if (response.status === 201) {
                 console.log(`${user.firstName} has been authenticated`);
+                const creds = {
+                    emailAddress: user.emailAddress,
+                    password: user.password
+                };
+                await signIn(creds);
                 navigate('/');
             } else if (response.status === 400) {
                 const data = await response.json();
@@ -58,7 +66,8 @@ function UserSignUp() {
             }
         } catch (error) {
             console.log(error);
-            <Link to='error' />
+            navigate('/error');
+            // <Link to='error' />
         }
     };
 

@@ -16,7 +16,7 @@ function Courses() {
           {courses.map((course, index) => (
             <Link className="course--module course--link" key={index} to={`/courses/${course.id}`}>
               <h2 className="course--label">Course</h2>
-              <h3 className="course--title">{course.description}</h3>
+              <h3 className="course--title">{course.title}</h3>
             </Link>
           ))}
           <Link className="course--module course--add--module" to={'courses/create'}>
