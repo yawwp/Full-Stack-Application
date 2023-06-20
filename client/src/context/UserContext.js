@@ -67,8 +67,8 @@ export const UserProvider = (props) => {
                 return user;
             } else if (response.status === 401) {
                 return null;
-            } else {
-                throw new Error();
+            } else if (response.status === 500) {
+                throw new Error('Internal Server Error');
             }
         } catch (error) {
             console.log(error);

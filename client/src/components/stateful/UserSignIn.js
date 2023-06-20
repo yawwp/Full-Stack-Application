@@ -45,8 +45,14 @@ function UserSignIn() {
                 throw new Error();
             }
         } catch (error) {
-            setErrors(["Sign-in was unsuccessful"]);
-        }
+            //500 Error 
+            if (error.message === 'Internal Server Error'){
+                navigate('/error'); 
+            } else {
+            //Validation Error 
+                setErrors(["Sign-in was unsuccessful"]);
+            }
+        } 
     }
 
     const handleCancel = async (event) => {

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import ReactMarkdown from 'react-markdown';
 import { useContext } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import CourseContext from '../../context/CourseContext';
@@ -38,6 +39,7 @@ function CourseDetail() {
      *      If the index matches somewhere, then the data is rendered to the page
      *      If the index does not match, then the data is navigated to the /error route
      */
+
     useEffect(() => {
         const fetchCourse = async () => {
             try {
@@ -76,6 +78,12 @@ function CourseDetail() {
     if (!singleCourse || loading) {
         return <div>Searching....</div>
     } else {
+        //Name Capitalization
+        const fName = singleCourse.User.firstName;
+        const lName = singleCourse.User.lastName;
+        const capitalizedFirst = fName.charAt(0).toUpperCase() + fName.slice(1);
+        const capitalizedLast = lName.charAt(0).toUpperCase() + lName.slice(1);
+
         //Material Rendering
         const arrayMaterials = singleCourse.materialsNeeded.split('\n');
         const filteredMaterials = arrayMaterials.filter(material => material.trim() !== '');
@@ -118,7 +126,7 @@ function CourseDetail() {
             <main>
                 <div className="actions--bar">
                     <div className="wrap">
-                        { authUser && authUser.emailAddress === singleCourse.User.emailAddress ?
+                        {authUser && authUser.emailAddress === singleCourse.User.emailAddress ?
                             <>
                                 <Link className="button" to={`/courses/${id}/update`}>Update Course</Link>
                                 <Link className="button" onClick={() => handleCourseDelete(singleCourse.id)} to="/">Delete Course</Link>
@@ -138,8 +146,8 @@ function CourseDetail() {
                             <div>
                                 <h3 className="course--detail--title">Course</h3>
                                 <h4 className="course--name">{singleCourse.title}</h4>
-                                <p>By {singleCourse.User.firstName} {singleCourse.User.lastName} </p>
-                                <p> {singleCourse.description}</p>
+                                <p>By {capitalizedFirst} {capitalizedLast} </p>
+                                <ReactMarkdown>{singleCourse.description}</ReactMarkdown>
                             </div>
                             <div>
                                 <h3 className="course--detail--title">Estimated Time</h3>
@@ -149,9 +157,10 @@ function CourseDetail() {
                                 <ul className="course--detail--list">
                                     {
                                         filteredMaterials.map((material, index) => (
-                                            <li key={index}> {material} </li>
+                                            <li key={index}> <ReactMarkdown>{material}</ReactMarkdown></li>
                                         ))}
-                                </ul>
+                                </ul> 
+
                             </div>
                         </div>
                     </form>
