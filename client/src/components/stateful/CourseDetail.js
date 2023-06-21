@@ -83,12 +83,7 @@ function CourseDetail() {
         const lName = singleCourse.User.lastName;
         const capitalizedFirst = fName.charAt(0).toUpperCase() + fName.slice(1);
         const capitalizedLast = lName.charAt(0).toUpperCase() + lName.slice(1);
-
-        //Material Rendering
-        const arrayMaterials = singleCourse.materialsNeeded.split('\n');
-        const filteredMaterials = arrayMaterials.filter(material => material.trim() !== '');
-
-
+        
         /**
          * Course Delete Handler
          * @param id - uses the param hook to search the id of the page. 
@@ -156,12 +151,8 @@ function CourseDetail() {
 
                                 <h3 className="course--detail--title">Materials Needed</h3>
                                 <ul className="course--detail--list">
-                                    {
-                                        filteredMaterials.map((material, index) => (
-                                            <li key={index}> <ReactMarkdown>{material}</ReactMarkdown></li>
-                                        ))}
+                                    <ReactMarkdown>{singleCourse.materialsNeeded}</ReactMarkdown> 
                                 </ul> 
-
                             </div>
                         </div>
                     </form>
