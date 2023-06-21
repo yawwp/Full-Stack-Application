@@ -6,6 +6,7 @@ import CourseContext from '../../context/CourseContext';
 import UserContext from '../../context/UserContext';
 
 
+
 function CourseDetail() {
     //Using the Parameters from localhost:3000/courses/:id
     const { id } = useParams();
@@ -83,7 +84,11 @@ function CourseDetail() {
         const lName = singleCourse.User.lastName;
         const capitalizedFirst = fName.charAt(0).toUpperCase() + fName.slice(1);
         const capitalizedLast = lName.charAt(0).toUpperCase() + lName.slice(1);
-        
+
+        const ulRender = (props) => {
+            return <ul className="course--detail--list">{props.children}</ul>;
+        };
+
         /**
          * Course Delete Handler
          * @param id - uses the param hook to search the id of the page. 
@@ -150,9 +155,7 @@ function CourseDetail() {
                                 <p>{singleCourse.estimatedTime}</p>
 
                                 <h3 className="course--detail--title">Materials Needed</h3>
-                                <ul className="course--detail--list">
-                                    <ReactMarkdown>{singleCourse.materialsNeeded}</ReactMarkdown> 
-                                </ul> 
+                                <ReactMarkdown components={{ ul: ulRender }}>{singleCourse.materialsNeeded}</ReactMarkdown>
                             </div>
                         </div>
                     </form>
