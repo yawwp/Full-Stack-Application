@@ -19,6 +19,7 @@ import UserContext from '../../context/UserContext';
 
 const UpdateCourse = () => {
     const [errors, setErrors] = useState([]);
+    const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
 
     const updatedTitle = useRef(null);
@@ -28,36 +29,50 @@ const UpdateCourse = () => {
 
 
     const { authUser, user } = useContext(UserContext);
-    const { updateCourses } = useContext(CourseContext).actions;
+    const { singleCourse, courses } = useContext(CourseContext);
+    const { updateCourses, fetchSingleCourse, fetchCourses } = useContext(CourseContext).actions;
 
     const { id } = useParams();
-    const { courses } = useContext(CourseContext);
-    const selectedCourse = courses.filter(course => course.id === parseInt(id));
-    const course = selectedCourse[0];
+    const index = parseInt(id);
 
     useEffect(() => {
-        const checkCourseIndex = () => {
-            let array = courses.map(course => course.id);
-            let checkerId = array.find(number => number === parseInt(id))
+        const fetchCourse = async () => {
+            try {
+                await Promise.all([fetchSingleCourse(index), fetchCourses()]);
+                setLoading(false);
+            } catch (error) {
+                console.error(error);
+                navigate('/error');
+            }
+        };
+        fetchCourse();
+    }, [index]);
 
+    useEffect(() => {
+        if (!loading) {
+            let array = courses.map(course => course.id);
+            let checkerId = array.find(number => number === index);
             if (checkerId === undefined) {
                 navigate('/notfound');
             } else {
-                if ( course.User.emailAddress !== user.emailAddress ){
+                if (typeof (id) !== undefined && singleCourse.User.emailAddress !== user.emailAddress) {
                     navigate('/forbidden');
                 }
             }
         }
-        checkCourseIndex();    
-    }, [courses]);
+    }, [loading]);
 
 
     try {
-        if (!course) {
+        if (!singleCourse) {
             return <div> Loading..... </div>;
         } else {
+            const fName = singleCourse.User.firstName;
+            const lName = singleCourse.User.lastName;
+            const capitalizedFirst = fName.charAt(0).toUpperCase() + fName.slice(1);
+            const capitalizedLast = lName.charAt(0).toUpperCase() + lName.slice(1);
 
-            const { title, description, estimatedTime, materialsNeeded } = course;
+            const { title, description, estimatedTime, materialsNeeded } = singleCourse;
 
             const onSubmit = async (event) => {
                 event.preventDefault();
@@ -68,7 +83,7 @@ const UpdateCourse = () => {
                     estimatedTime: updatedTime.current.value,
                     materialsNeeded: updatedMaterials.current.value,
                     title: updatedTitle.current.value,
-                    id: course.id,
+                    id: singleCourse.id,
                     userId: authUser.id
                 });
 
@@ -84,7 +99,7 @@ const UpdateCourse = () => {
                 };
 
                 try {
-                    const response = await fetch(`http://localhost:5000/api/courses/${course.id}`, updateOptions);
+                    const response = await fetch(`http://localhost:5000/api/courses/${singleCourse.id}`, updateOptions);
                     if (response.status === 204) {
                         const data = courses.map(course => {
                             if (course.id === updatedCourse.id) {
@@ -98,13 +113,13 @@ const UpdateCourse = () => {
                     } else if (response.status === 400) {
                         const data = await response.json();
                         setErrors(data.errors);
-                    } else if (response.status === 401 ) {
+                    } else if (response.status === 401) {
                         navigate('/forbidden');
                     } else {
+                        console.log('else');
                         throw new Error();
                     }
                 } catch (error) {
-                    console.log(error);
                     navigate('/error');
                 }
 
@@ -112,7 +127,7 @@ const UpdateCourse = () => {
 
             const onCancel = (event) => {
                 event.preventDefault();
-                navigate('/');
+                navigate(`/courses/${id}`);
             }
 
             return (
@@ -135,7 +150,7 @@ const UpdateCourse = () => {
                                     <label htmlFor="courseTitle">Course Title</label>
                                     <input id="courseTitle" name="courseTitle" type="text" defaultValue={title} ref={updatedTitle} />
 
-                                    <p>By {course.User.firstName} {course.User.lastName}</p>
+                                    <p>By {capitalizedFirst} {capitalizedLast}</p>
 
                                     <label htmlFor="courseDescription">Course Description</label>
                                     <textarea id="courseDescription" name="courseDescription" defaultValue={description} ref={updatedDesc} />

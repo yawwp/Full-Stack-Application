@@ -88,6 +88,7 @@ function CourseDetail() {
         const arrayMaterials = singleCourse.materialsNeeded.split('\n');
         const filteredMaterials = arrayMaterials.filter(material => material.trim() !== '');
 
+
         /**
          * Course Delete Handler
          * @param id - uses the param hook to search the id of the page. 
